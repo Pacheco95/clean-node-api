@@ -87,4 +87,19 @@ describe('DBAddAccount use cases', () => {
 
     })
   })
+
+  it('should throw if AddAccountRepository throws', async () => {
+    const { sut, addAccountRepositoryStub } = makeSut()
+    const error = new Error()
+    jest.spyOn(addAccountRepositoryStub, 'add').mockImplementationOnce(() => {
+      throw error
+    })
+    const account: AddAccountModel = {
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'valid_password'
+    }
+    const accountPromise = sut.add(account)
+    await expect(accountPromise).rejects.toBe(error)
+  })
 })
